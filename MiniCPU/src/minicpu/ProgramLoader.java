@@ -5,6 +5,7 @@
  */
 package minicpu;
 
+import minicpu.instruction.ASMInstruction;
 import minicpu.instruction.Instruction;
 
 /**
@@ -18,14 +19,16 @@ public class ProgramLoader {
      * @param program Array of String code lines.
      * @return Instruction array.
      */
-    public static Instruction[] loadProgram(String[] program) {
+    public static Instruction[] loadProgram(String[] program) throws Exception {
         Instruction instructions[];
         int length = program.length;
         instructions = new Instruction[length];
         int i = 0;
         for (String str: program) {
-            instructions[i] = new Instruction(str);   
-            instructions[i].decode();
+            instructions[i] = new ASMInstruction(str);   
+            if (instructions[i].decode() == null) {
+                throw new Exception(String.format("Error reading instruction: %s.", str));
+            }
             i++;
         }
         return instructions;

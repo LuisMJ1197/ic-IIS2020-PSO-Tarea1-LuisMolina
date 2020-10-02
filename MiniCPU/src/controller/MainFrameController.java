@@ -15,7 +15,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollBar;
 import minicpu.CPU;
 import minicpu.Program;
-import minicpu.Register;
+import minicpu.instruction.ASMInstruction;
+import minicpu.instruction.BinaryInstruction;
 import util.BinaryConversor;
 import util.FileBrowser;
 import view.MainFrame;
@@ -73,8 +74,11 @@ public class MainFrameController implements ActionListener {
             loadProgramView(this.loadedProgram);
             this.view.executeButton.setEnabled(true);
         } catch (IOException ex) {
-            Logger.getLogger(MainFrameController.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(this.view, "It was an error opening the file.");
+            this.view.executeButton.setEnabled(false);
+        } catch (Exception ex) {
+            Logger.getLogger(MainFrameController.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(this.view, ex.getMessage());
             this.view.executeButton.setEnabled(false);
         }
     }
@@ -104,8 +108,13 @@ public class MainFrameController implements ActionListener {
      */
     private void loadProgramView(Program program) {
         int initPos = program.getInitPosition();
+        this.updateView(false);
+        for (MemoryRegisterPanel mem: this.memoryRegisters) {
+            mem.binaryCodeLabel.setText("0000 0000 00000000");
+            mem.asmCodeLabel.setText("");
+        }
         for (int instructionPos = 0; instructionPos < program.getProgramSize(); instructionPos++) {
-            String str = program.getInstructions()[instructionPos].getBinRepresentation();
+            String str = ((ASMInstruction)program.getInstructions()[instructionPos]).getBinRepresentation().getInstructionString();
             JScrollBar vertical = this.view.memoryPanel.getVerticalScrollBar();
             vertical.setValue( 22 * program.getInitPosition());
             this.memoryRegisters[initPos].binaryCodeLabel.setText(String.format("%s %s %s", str.substring(0, 4), str.substring(4, 8), str.substring(8)));
@@ -139,38 +148,42 @@ public class MainFrameController implements ActionListener {
      * @param bin True if the values will be presented in binary or False in decimal.
      */
     private void updateView (boolean bin) {
+        int AX = BinaryConversor.toInteger(BinaryInstruction.AX);
+        int BX = BinaryConversor.toInteger(BinaryInstruction.BX);
+        int CX = BinaryConversor.toInteger(BinaryInstruction.CX);
+        int DX = BinaryConversor.toInteger(BinaryInstruction.DX);
         if (bin) {
-            this.view.pcReg.setText(this.cpu.getPc().getData());
-            this.view.acReg.setText(this.cpu.getAc().getData());
+            this.view.pcReg.setText(this.cpu.getPc());
+            this.view.acReg.setText(this.cpu.getAc());
             
-            this.view.axReg.setText(this.cpu.getMemory().getValue(Register.AX));
-            this.view.bxReg.setText(this.cpu.getMemory().getValue(Register.BX));
-            this.view.cxReg.setText(this.cpu.getMemory().getValue(Register.CX));
-            this.view.dxReg.setText(this.cpu.getMemory().getValue(Register.DX));
+            this.view.axReg.setText(this.cpu.getMemory().getValue(AX));
+            this.view.bxReg.setText(this.cpu.getMemory().getValue(BX));
+            this.view.cxReg.setText(this.cpu.getMemory().getValue(CX));
+            this.view.dxReg.setText(this.cpu.getMemory().getValue(DX));
         } else {
-            this.view.pcReg.setText(Integer.toString(BinaryConversor.toInteger(this.cpu.getPc().getData())));
-            this.view.acReg.setText(Integer.toString(BinaryConversor.toInteger2(this.cpu.getAc().getData().substring(8))));
+            this.view.pcReg.setText(Integer.toString(BinaryConversor.toInteger(this.cpu.getPc())));
+            this.view.acReg.setText(Integer.toString(BinaryConversor.toInteger2(this.cpu.getAc().substring(8))));
             
-            this.view.axReg.setText(Integer.toString(BinaryConversor.toInteger2(this.cpu.getMemory().getValue(Register.AX).substring(8))));
-            this.view.bxReg.setText(Integer.toString(BinaryConversor.toInteger2(this.cpu.getMemory().getValue(Register.BX).substring(8))));
-            this.view.cxReg.setText(Integer.toString(BinaryConversor.toInteger2(this.cpu.getMemory().getValue(Register.CX).substring(8))));
-            this.view.dxReg.setText(Integer.toString(BinaryConversor.toInteger2(this.cpu.getMemory().getValue(Register.DX).substring(8))));
+            this.view.axReg.setText(Integer.toString(BinaryConversor.toInteger2(this.cpu.getMemory().getValue(AX).substring(8))));
+            this.view.bxReg.setText(Integer.toString(BinaryConversor.toInteger2(this.cpu.getMemory().getValue(BX).substring(8))));
+            this.view.cxReg.setText(Integer.toString(BinaryConversor.toInteger2(this.cpu.getMemory().getValue(CX).substring(8))));
+            this.view.dxReg.setText(Integer.toString(BinaryConversor.toInteger2(this.cpu.getMemory().getValue(DX).substring(8))));
         }
         
-        this.view.irReg.setText(this.cpu.getIr().getData());
-        String ax = this.cpu.getMemory().getValue(Register.AX);
-        this.memoryRegisters[Register.AX].binaryCodeLabel.setText(String.format("%s %s %s", ax.substring(0, 4), ax.substring(4, 8), ax.substring(8)));
+        this.view.irReg.setText(this.cpu.getIr());
+        String ax = this.cpu.getMemory().getValue(AX);
+        this.memoryRegisters[AX].binaryCodeLabel.setText(String.format("%s %s %s", ax.substring(0, 4), ax.substring(4, 8), ax.substring(8)));
 
-        String bx = this.cpu.getMemory().getValue(Register.AX);
-        this.memoryRegisters[Register.AX].binaryCodeLabel.setText(String.format("%s %s %s", bx.substring(0, 4), bx.substring(4, 8), bx.substring(8)));
+        String bx = this.cpu.getMemory().getValue(BX);
+        this.memoryRegisters[BX].binaryCodeLabel.setText(String.format("%s %s %s", bx.substring(0, 4), bx.substring(4, 8), bx.substring(8)));
 
-        String cx = this.cpu.getMemory().getValue(Register.AX);
-        this.memoryRegisters[Register.AX].binaryCodeLabel.setText(String.format("%s %s %s", cx.substring(0, 4), cx.substring(4, 8), cx.substring(8)));
+        String cx = this.cpu.getMemory().getValue(CX);
+        this.memoryRegisters[CX].binaryCodeLabel.setText(String.format("%s %s %s", cx.substring(0, 4), cx.substring(4, 8), cx.substring(8)));
 
-        String dx = this.cpu.getMemory().getValue(Register.AX);
-        this.memoryRegisters[Register.AX].binaryCodeLabel.setText(String.format("%s %s %s", dx.substring(0, 4), dx.substring(4, 8), dx.substring(8)));
+        String dx = this.cpu.getMemory().getValue(DX);
+        this.memoryRegisters[DX].binaryCodeLabel.setText(String.format("%s %s %s", dx.substring(0, 4), dx.substring(4, 8), dx.substring(8)));
             
-        int memoryPos = BinaryConversor.toInteger(this.cpu.getPc().getData());
+        int memoryPos = BinaryConversor.toInteger(this.cpu.getPc());
         for (MemoryRegisterPanel regPane: this.memoryRegisters) {
             regPane.setBackground(new java.awt.Color(240, 240, 240));
         }

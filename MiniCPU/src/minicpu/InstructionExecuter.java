@@ -5,6 +5,7 @@
  */
 package minicpu;
 
+import minicpu.instruction.BinaryInstruction;
 import minicpu.instruction.Instruction;
 import util.BinaryConversor;
 
@@ -19,30 +20,29 @@ public class InstructionExecuter {
      * @param instruction Instruction for executing
      */
     public static void executeInstruction(CPU cpu, String instruction) {
-        String op = instruction.substring(0, 4);
-        String reg = instruction.substring(4, 8);
-        String number = instruction.substring(8);
-        switch (op) {
-            case Instruction.LOAD:
-                cpu.getAc().setData(cpu.getMemory().getValue(BinaryConversor.toInteger(reg)));
+        Instruction inst = new BinaryInstruction(instruction);
+        inst.decode();
+        switch (inst.getOperator()) {
+            case BinaryInstruction.LOAD:
+                cpu.setAc(cpu.getMemory().getValue(BinaryConversor.toInteger(inst.getAddressing())));
                 break;
-            case Instruction.STORE:
-                cpu.getMemory().setValue(BinaryConversor.toInteger(reg), cpu.getAc().getData());
+            case BinaryInstruction.STORE:
+                cpu.getMemory().setValue(BinaryConversor.toInteger(inst.getAddressing()), cpu.getAc());
                 break;
-            case Instruction.MOV:
-                cpu.getMemory().setValue(BinaryConversor.toInteger(reg), "00000000".concat(number));
+            case BinaryInstruction.MOV:
+                cpu.getMemory().setValue(BinaryConversor.toInteger(inst.getAddressing()), "00000000".concat(inst.getNumber()));
                 break;
-            case Instruction.ADD:
-                cpu.getAc().setData("00000000".concat(
+            case BinaryInstruction.ADD:
+                cpu.setAc("00000000".concat(
                         BinaryConversor.toBinary2(Integer.toString(
-                                BinaryConversor.toInteger2(cpu.getAc().getData().substring(8)) + BinaryConversor.toInteger2(cpu.getMemory().getValue(BinaryConversor.toInteger(reg)).substring(8))
+                                BinaryConversor.toInteger2(cpu.getAc().substring(8)) + BinaryConversor.toInteger2(cpu.getMemory().getValue(BinaryConversor.toInteger(inst.getAddressing())).substring(8))
                         ), 7))
                 );
                 break;
-            case Instruction.SUB:
-                cpu.getAc().setData("00000000".concat(
+            case BinaryInstruction.SUB:
+                cpu.setAc("00000000".concat(
                         BinaryConversor.toBinary2(Integer.toString(
-                                BinaryConversor.toInteger2(cpu.getAc().getData().substring(8)) - BinaryConversor.toInteger2(cpu.getMemory().getValue(BinaryConversor.toInteger(reg)).substring(8))
+                                BinaryConversor.toInteger2(cpu.getAc().substring(8)) - BinaryConversor.toInteger2(cpu.getMemory().getValue(BinaryConversor.toInteger(inst.getAddressing())).substring(8))
                         ), 7))
                 );
                 break;

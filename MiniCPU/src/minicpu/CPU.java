@@ -15,40 +15,40 @@ import util.BinaryConversor;
  * @author Luism
  */
 public class CPU {
-    private Register ac;
-    private Register pc;
-    private Register ir;
+    private String ac;
+    private String pc;
+    private String ir;
     private Memory memory;
     private ArrayList<Program> processes = new ArrayList<>();
     
     public CPU() {
-        this.ac = new Register();
-        this.pc = new Register();
-        this.ir = new Register();
+        this.ac = "0000000000000000";
+        this.pc = "0000000000000000";
+        this.ir = "0000000000000000";
         this.memory = new Memory();
     }
 
-    public Register getAc() {
+    public String getAc() {
         return ac;
     }
 
-    public void setAc(Register ac) {
+    public void setAc(String ac) {
         this.ac = ac;
     }
 
-    public Register getPc() {
+    public String getPc() {
         return pc;
     }
 
-    public void setPc(Register pc) {
+    public void setPc(String pc) {
         this.pc = pc;
     }
 
-    public Register getIr() {
+    public String getIr() {
         return ir;
     }
 
-    public void setIr(Register ir) {
+    public void setIr(String ir) {
         this.ir = ir;
     }
 
@@ -82,17 +82,17 @@ public class CPU {
     public void executeProgram(int id) {
         Program program = this.findProcess(id);
         if (program != null) {
-            this.pc.setData(BinaryConversor.toBinary(Integer.toString(program.getInitPosition()), 16));
-            this.ir.setData(program.getInstructions()[0].getBinRepresentation());
+            this.pc = BinaryConversor.toBinary(Integer.toString(program.getInitPosition()), 16);
+            this.ir = program.getInstructions()[0].decode();
         }
     }
     /**
      * Restarts all the registers and memory.
      */
     private void clearAll() {
-        this.pc.setData(BinaryConversor.toBinary("0", 16));
-        this.ir.setData(BinaryConversor.toBinary("0", 16));
-        this.ac.setData(BinaryConversor.toBinary("0", 16));
+        this.pc = BinaryConversor.toBinary("0", 16);
+        this.ir = BinaryConversor.toBinary("0", 16);
+        this.ac = BinaryConversor.toBinary("0", 16);
         this.memory.clear();
     }
     
@@ -104,12 +104,12 @@ public class CPU {
     public boolean executeNextInstruction(int id) {
         Program program = this.findProcess(id);
         if (program != null) {
-            int intPc = BinaryConversor.toInteger(this.pc.getData());
-            InstructionExecuter.executeInstruction(this, this.memory.getValue(intPc));
+            int intPc = BinaryConversor.toInteger(this.pc);
+            InstructionExecuter.executeInstruction(this, this.ir);
             intPc += 1;
             if (intPc < program.getInitPosition() + program.getProgramSize()) {
-                this.pc.setData(BinaryConversor.toBinary(Integer.toString(intPc), 16));
-                this.ir.setData(this.memory.getValue(intPc));
+                this.pc = BinaryConversor.toBinary(Integer.toString(intPc), 16);
+                this.ir = this.memory.getValue(intPc);
             } else {
                 return false;
             }

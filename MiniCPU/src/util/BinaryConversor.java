@@ -72,10 +72,10 @@ public class BinaryConversor {
         int number = Integer.parseInt(str);
         if (number < 0) {
             result += "1";
-            result += BinaryConversor.toBinary(str.substring(1), bitCantRepresentation);
+            result += BinaryConversor.toBinary(str.substring(1), bitCantRepresentation - 1);
         } else {
             result += "0";
-            result += BinaryConversor.toBinary(str, bitCantRepresentation);
+            result += BinaryConversor.toBinary(str, bitCantRepresentation - 1);
         }
         return result;
     }

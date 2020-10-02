@@ -18,7 +18,7 @@ public class Program {
     private int initPosition = 0;
     private int id = 0;
     
-    public Program(String[] data) {
+    public Program(String[] data) throws Exception {
         this.id = ++sCantProgram;
         this.setInstructions(data);
         this.programSize = this.instructions.length;
@@ -40,7 +40,7 @@ public class Program {
         this.initPosition = initPosition;
     }
     
-    private void setInstructions(String[] data) {
+    private void setInstructions(String[] data) throws Exception {
         this.instructions = ProgramLoader.loadProgram(data);
     }
     
