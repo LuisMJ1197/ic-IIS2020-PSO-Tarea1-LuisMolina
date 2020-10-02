@@ -43,6 +43,7 @@ public class Memory {
     /**
      * Loads a program in memory according to a random initial position.
      * @param program Program for loading
+     * @throws java.lang.Exception
      */
     public void loadProgram(Program program) throws Exception {
         int position = this.saveMemory(program.getProgramSize());

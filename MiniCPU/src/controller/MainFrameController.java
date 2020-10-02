@@ -174,12 +174,12 @@ public class MainFrameController implements ActionListener {
             this.view.dxReg.setText(this.cpu.getMemory().getValue(DX));
         } else {
             this.view.pcReg.setText(Integer.toString(BinaryConversor.toInteger(this.cpu.getPc())));
-            this.view.acReg.setText(Integer.toString(BinaryConversor.toInteger2(this.cpu.getAc().substring(8))));
+            this.view.acReg.setText(Integer.toString(BinaryConversor.toInteger2(this.cpu.getAc())));
             
-            this.view.axReg.setText(Integer.toString(BinaryConversor.toInteger2(this.cpu.getMemory().getValue(AX).substring(8))));
-            this.view.bxReg.setText(Integer.toString(BinaryConversor.toInteger2(this.cpu.getMemory().getValue(BX).substring(8))));
-            this.view.cxReg.setText(Integer.toString(BinaryConversor.toInteger2(this.cpu.getMemory().getValue(CX).substring(8))));
-            this.view.dxReg.setText(Integer.toString(BinaryConversor.toInteger2(this.cpu.getMemory().getValue(DX).substring(8))));
+            this.view.axReg.setText(Integer.toString(BinaryConversor.toInteger2(this.cpu.getMemory().getValue(AX))));
+            this.view.bxReg.setText(Integer.toString(BinaryConversor.toInteger2(this.cpu.getMemory().getValue(BX))));
+            this.view.cxReg.setText(Integer.toString(BinaryConversor.toInteger2(this.cpu.getMemory().getValue(CX))));
+            this.view.dxReg.setText(Integer.toString(BinaryConversor.toInteger2(this.cpu.getMemory().getValue(DX))));
         }
         
         this.view.irReg.setText(this.cpu.getIr());

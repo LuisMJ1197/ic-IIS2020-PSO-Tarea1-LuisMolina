@@ -31,7 +31,8 @@ public class InstructionExecuter {
                 cpu.getMemory().setValue(BinaryConversor.toInteger(inst.getAddressing()), cpu.getAc());
                 break;
             case BinaryInstruction.MOV:
-                cpu.getMemory().setValue(BinaryConversor.toInteger(inst.getAddressing()), "00000000".concat(inst.getNumber()));
+                cpu.getMemory().setValue(BinaryConversor.toInteger(inst.getAddressing()), 
+                        inst.getNumber().substring(0, 1).concat("00000000").concat(inst.getNumber().substring(1)));
                 break;
             case BinaryInstruction.ADD:
                 executeAdd(inst, cpu);
@@ -58,11 +59,11 @@ public class InstructionExecuter {
      * @throws Exception If there is an overflow
      */
     public static void executeAdd(Instruction inst, CPU cpu) throws Exception {
-        int res = BinaryConversor.toInteger2(cpu.getAc().substring(8)) + 
-                        BinaryConversor.toInteger2(cpu.getMemory().getValue(BinaryConversor.toInteger(inst.getAddressing())).substring(8));
+        int res = BinaryConversor.toInteger2(cpu.getAc()) + 
+                        BinaryConversor.toInteger2(cpu.getMemory().getValue(BinaryConversor.toInteger(inst.getAddressing())));
         if (validateNumberExtension(res)) {
-            cpu.setAc("00000000".concat(
-                    BinaryConversor.toBinary2(Integer.toString(res), BinaryInstruction.REGISTER_NUMBER_BITS_EXTENSION))
+            cpu.setAc(
+                    BinaryConversor.toBinary2(Integer.toString(res), BinaryInstruction.REGISTER_NUMBER_BITS_EXTENSION)
             );
         } else {
             throw new Exception("Number out of range exception");
@@ -76,11 +77,11 @@ public class InstructionExecuter {
      * @throws Exception If there is an overflow
      */
     public static void executeSub(Instruction inst, CPU cpu) throws Exception {
-        int res = BinaryConversor.toInteger2(cpu.getAc().substring(8)) - 
-                        BinaryConversor.toInteger2(cpu.getMemory().getValue(BinaryConversor.toInteger(inst.getAddressing())).substring(8));
+        int res = BinaryConversor.toInteger2(cpu.getAc()) - 
+                        BinaryConversor.toInteger2(cpu.getMemory().getValue(BinaryConversor.toInteger(inst.getAddressing())));
         if (validateNumberExtension(res)) {
-            cpu.setAc("00000000".concat(
-                    BinaryConversor.toBinary2(Integer.toString(res), BinaryInstruction.REGISTER_NUMBER_BITS_EXTENSION))
+            cpu.setAc(
+                    BinaryConversor.toBinary2(Integer.toString(res), BinaryInstruction.REGISTER_NUMBER_BITS_EXTENSION)
             );
         } else {
             throw new Exception("Number out of range exception");

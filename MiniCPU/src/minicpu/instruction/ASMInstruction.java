@@ -80,7 +80,7 @@ public class ASMInstruction extends Instruction {
      */
     private String decodeNumber(String str) throws Exception {
         try {
-            if (Math.abs(Integer.parseInt(str)) <= (Math.pow(2, BinaryInstruction.LITERAL_NUMBER_BITS_EXTENSION) - 1)) {
+            if (Math.abs(Integer.parseInt(str)) <= (Math.pow(2, BinaryInstruction.LITERAL_NUMBER_BITS_EXTENSION - 1) - 1)) {
                 return BinaryConversor.toBinary2(str, 8);
             } else {
                 throw new Exception("Number out of range exception at " + this.instructionString);

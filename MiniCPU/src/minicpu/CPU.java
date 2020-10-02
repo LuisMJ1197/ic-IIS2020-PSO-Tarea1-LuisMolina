@@ -70,7 +70,7 @@ public class CPU {
      * Loads a program in memory.
      * @param program Program for loading
      */
-    public void loadProgram(Program program) {
+    public void loadProgram(Program program) throws Exception {
         this.clearAll();
         this.memory.loadProgram(program);
         this.processes.clear();
@@ -80,6 +80,7 @@ public class CPU {
     /**
      * Executes a program, updates the pc and ir registers.
      * @param id Program id
+     * @throws java.lang.Exception
      */
     public void executeProgram(int id) throws Exception {
         Program program = this.findProcess(id);

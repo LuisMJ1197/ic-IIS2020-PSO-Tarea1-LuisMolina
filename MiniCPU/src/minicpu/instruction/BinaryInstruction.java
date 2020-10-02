@@ -20,8 +20,8 @@ public class BinaryInstruction extends Instruction {
     public static final String BX = "0010";
     public static final String CX = "0011";
     public static final String DX = "0100";
-    public static final int LITERAL_NUMBER_BITS_EXTENSION = 7;
-    public static final int REGISTER_NUMBER_BITS_EXTENSION = 15;
+    public static final int LITERAL_NUMBER_BITS_EXTENSION = 8;
+    public static final int REGISTER_NUMBER_BITS_EXTENSION = 16;
     
     public static final int[] OPERATOR_RANGE = {0, 4};
     public static final int[] ADDRESSING_RANGE = {4, 8};
