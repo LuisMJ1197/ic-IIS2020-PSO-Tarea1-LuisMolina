@@ -6,6 +6,8 @@
 package minicpu;
 
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import minicpu.instruction.Instruction;
 import util.BinaryConversor;
 
@@ -79,7 +81,7 @@ public class CPU {
      * Executes a program, updates the pc and ir registers.
      * @param id Program id
      */
-    public void executeProgram(int id) {
+    public void executeProgram(int id) throws Exception {
         Program program = this.findProcess(id);
         if (program != null) {
             this.pc = BinaryConversor.toBinary(Integer.toString(program.getInitPosition()), 16);
@@ -100,12 +102,17 @@ public class CPU {
      * Executes the actual instruction and move to next one. Updates the pc and ir.
      * @param id Program id
      * @return True if the program finalizes, False otherwise.
+     * @throws java.lang.Exception
      */
-    public boolean executeNextInstruction(int id) {
+    public boolean executeNextInstruction(int id) throws Exception {
         Program program = this.findProcess(id);
         if (program != null) {
             int intPc = BinaryConversor.toInteger(this.pc);
-            InstructionExecuter.executeInstruction(this, this.ir);
+            try {
+                InstructionExecuter.executeInstruction(this, this.ir);
+            } catch (Exception ex) {
+                throw new Exception(ex.getMessage() + " at " + this.ir);
+            }
             intPc += 1;
             if (intPc < program.getInitPosition() + program.getProgramSize()) {
                 this.pc = BinaryConversor.toBinary(Integer.toString(intPc), 16);

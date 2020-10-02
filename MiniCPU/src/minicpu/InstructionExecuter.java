@@ -18,8 +18,9 @@ public class InstructionExecuter {
      * Allows to execute a instruction according to the operator.
      * @param cpu CPU object in which registers and memory will be modified according to the instruction.
      * @param instruction Instruction for executing
+     * @throws java.lang.Exception
      */
-    public static void executeInstruction(CPU cpu, String instruction) {
+    public static void executeInstruction(CPU cpu, String instruction) throws Exception {
         Instruction inst = new BinaryInstruction(instruction);
         inst.decode();
         switch (inst.getOperator()) {
@@ -33,19 +34,56 @@ public class InstructionExecuter {
                 cpu.getMemory().setValue(BinaryConversor.toInteger(inst.getAddressing()), "00000000".concat(inst.getNumber()));
                 break;
             case BinaryInstruction.ADD:
-                cpu.setAc("00000000".concat(
-                        BinaryConversor.toBinary2(Integer.toString(
-                                BinaryConversor.toInteger2(cpu.getAc().substring(8)) + BinaryConversor.toInteger2(cpu.getMemory().getValue(BinaryConversor.toInteger(inst.getAddressing())).substring(8))
-                        ), 7))
-                );
+                executeAdd(inst, cpu);
                 break;
             case BinaryInstruction.SUB:
-                cpu.setAc("00000000".concat(
-                        BinaryConversor.toBinary2(Integer.toString(
-                                BinaryConversor.toInteger2(cpu.getAc().substring(8)) - BinaryConversor.toInteger2(cpu.getMemory().getValue(BinaryConversor.toInteger(inst.getAddressing())).substring(8))
-                        ), 7))
-                );
+                executeSub(inst, cpu);
                 break;
+        }
+    }
+    
+    /**
+     * Validates that the value of a register doesn't exceed the limit.
+     * @param number Number for validation
+     * @return true if is the number is in accepted range
+     */
+    public static boolean validateNumberExtension(int number) {
+        return (Math.abs(number) <= (Math.pow(2, BinaryInstruction.REGISTER_NUMBER_BITS_EXTENSION) - 1));
+    }
+    
+    /**
+     * Executes the add operation
+     * @param inst Instruction to be executed
+     * @param cpu The CPU object for accesing the registers
+     * @throws Exception If there is an overflow
+     */
+    public static void executeAdd(Instruction inst, CPU cpu) throws Exception {
+        int res = BinaryConversor.toInteger2(cpu.getAc().substring(8)) + 
+                        BinaryConversor.toInteger2(cpu.getMemory().getValue(BinaryConversor.toInteger(inst.getAddressing())).substring(8));
+        if (validateNumberExtension(res)) {
+            cpu.setAc("00000000".concat(
+                    BinaryConversor.toBinary2(Integer.toString(res), BinaryInstruction.REGISTER_NUMBER_BITS_EXTENSION))
+            );
+        } else {
+            throw new Exception("Number out of range exception");
+        }
+    }
+    
+    /**
+     * Executes the sub operation
+     * @param inst Instruction to be executed
+     * @param cpu The CPU object for accesing the registers
+     * @throws Exception If there is an overflow
+     */
+    public static void executeSub(Instruction inst, CPU cpu) throws Exception {
+        int res = BinaryConversor.toInteger2(cpu.getAc().substring(8)) - 
+                        BinaryConversor.toInteger2(cpu.getMemory().getValue(BinaryConversor.toInteger(inst.getAddressing())).substring(8));
+        if (validateNumberExtension(res)) {
+            cpu.setAc("00000000".concat(
+                    BinaryConversor.toBinary2(Integer.toString(res), BinaryInstruction.REGISTER_NUMBER_BITS_EXTENSION))
+            );
+        } else {
+            throw new Exception("Number out of range exception");
         }
     }
 }

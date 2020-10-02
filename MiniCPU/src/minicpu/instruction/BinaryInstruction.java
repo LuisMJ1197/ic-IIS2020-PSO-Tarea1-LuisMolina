@@ -20,6 +20,8 @@ public class BinaryInstruction extends Instruction {
     public static final String BX = "0010";
     public static final String CX = "0011";
     public static final String DX = "0100";
+    public static final int LITERAL_NUMBER_BITS_EXTENSION = 7;
+    public static final int REGISTER_NUMBER_BITS_EXTENSION = 15;
     
     public static final int[] OPERATOR_RANGE = {0, 4};
     public static final int[] ADDRESSING_RANGE = {4, 8};
@@ -30,7 +32,7 @@ public class BinaryInstruction extends Instruction {
     }
     
     @Override
-    public String decode() {
+    public String decode() throws Exception {
         this.operator = this.instructionString.substring(BinaryInstruction.OPERATOR_RANGE[0], BinaryInstruction.OPERATOR_RANGE[1]);
         this.addressing = this.instructionString.substring(BinaryInstruction.ADDRESSING_RANGE[0], BinaryInstruction.ADDRESSING_RANGE[1]);
         this.number = this.instructionString.substring(BinaryInstruction.NUMBER_RANGE[0]);

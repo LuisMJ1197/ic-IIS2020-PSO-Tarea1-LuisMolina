@@ -18,6 +18,7 @@ public class ProgramLoader {
      * Loads a program by converting the String array of code lines into an Instruction object array.
      * @param program Array of String code lines.
      * @return Instruction array.
+     * @throws java.lang.Exception
      */
     public static Instruction[] loadProgram(String[] program) throws Exception {
         Instruction instructions[];

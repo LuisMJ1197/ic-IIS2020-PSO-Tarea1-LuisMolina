@@ -41,7 +41,7 @@ public class ASMInstruction extends Instruction {
     }
     
     @Override
-    public String decode() {
+    public String decode() throws Exception {
         if (this.validateInstruction()) {
             String[] data = new String[3];
             data[2] = "00000000";
@@ -78,8 +78,16 @@ public class ASMInstruction extends Instruction {
      * @param str String representing the number.
      * @return A String with the number in binary.
      */
-    private String decodeNumber(String str) {
-        return BinaryConversor.toBinary2(str, 8);
+    private String decodeNumber(String str) throws Exception {
+        try {
+            if (Math.abs(Integer.parseInt(str)) <= (Math.pow(2, BinaryInstruction.LITERAL_NUMBER_BITS_EXTENSION) - 1)) {
+                return BinaryConversor.toBinary2(str, 8);
+            } else {
+                throw new Exception("Number out of range exception at " + this.instructionString);
+            }
+        } catch (NumberFormatException e) {
+            throw new Exception("Number format exception at " + this.instructionString);
+        }
     }
     
     /**

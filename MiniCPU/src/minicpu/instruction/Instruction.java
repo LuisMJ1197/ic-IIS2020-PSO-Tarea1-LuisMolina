@@ -19,7 +19,7 @@ public abstract class Instruction {
         this.instructionString = instructionString;
     }
     
-    public abstract String decode();
+    public abstract String decode() throws Exception ;
     
     public String getInstructionString() {
         return this.instructionString;

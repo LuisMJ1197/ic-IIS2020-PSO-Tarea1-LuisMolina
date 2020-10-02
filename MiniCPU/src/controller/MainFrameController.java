@@ -68,7 +68,7 @@ public class MainFrameController implements ActionListener {
         if (file == null) return;
         try {
             String dataR = fileBrowser.extractFileInfo(file);
-            this.data = dataR.split("\n"); //TODO: Delete blank 
+            this.data = dataR.split("\\r?\\n"); //TODO: Delete new line 
             this.loadedProgram = new Program(this.data);
             this.cpu.loadProgram(this.loadedProgram);
             loadProgramView(this.loadedProgram);
@@ -77,7 +77,6 @@ public class MainFrameController implements ActionListener {
             JOptionPane.showMessageDialog(this.view, "It was an error opening the file.");
             this.view.executeButton.setEnabled(false);
         } catch (Exception ex) {
-            Logger.getLogger(MainFrameController.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(this.view, ex.getMessage());
             this.view.executeButton.setEnabled(false);
         }
@@ -127,19 +126,32 @@ public class MainFrameController implements ActionListener {
      * Calls the executeProgram method of cpu, enables the run button and updates the view (pc register, ac registers, and others)
      */
     private void executeProgram() {
-        this.cpu.executeProgram(this.loadedProgram.getId());
-        this.view.nextButton.setEnabled(true);
-        this.updateView(false);
+        try {
+            this.cpu.executeProgram(this.loadedProgram.getId());
+            this.view.nextButton.setEnabled(true);
+            this.updateView(false);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this.view, ex.getMessage());
+            this.view.executeButton.setEnabled(false);
+            this.view.nextButton.setEnabled(false);
+        }
     }
     
     /**
      * Calls the executeNextInstruction of cpu. If that returns false, the program won't allow to press the nextButton (when it finalizes)
      */
     private void executeNextInstruction() {
-        if (!this.cpu.executeNextInstruction(this.loadedProgram.getId())) {
+        try {
+            if (!this.cpu.executeNextInstruction(this.loadedProgram.getId())) {
+                this.view.nextButton.setEnabled(false);
+            }
+            this.updateView(false);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this.view, ex.getMessage());
+            this.view.executeButton.setEnabled(false);
             this.view.nextButton.setEnabled(false);
         }
-        this.updateView(false);
+        
     }
     
     /**
